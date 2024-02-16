@@ -49,8 +49,8 @@ local ThemeManager = {} do
 	end
 
 	function ThemeManager:LoadDefault()		
-		local theme = 'Default'
-		local content = isfile(self.Folder .. '/themes/default.txt') and readfile(self.Folder .. '/themes/default.txt')
+		local theme = 'NullRed™'
+		local content = isfile(self.Folder .. '/themes/nullred.txt') and readfile(self.Folder .. '/themes/nullred.txt')
 
 		local isDefault = true
 		if content then
