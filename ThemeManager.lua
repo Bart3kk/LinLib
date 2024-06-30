@@ -1,10 +1,24 @@
 local httpService = game:GetService('HttpService')
-local themeManager = {} do
-	themeManager.Folder = 'LinoriaLibSettings'
-	-- if not isfolder(themeManager.Folder) then makefolder(themeManager.Folder) end
 
-	themeManager.Library = nil
-	themeManager.BuiltInThemes = {
+local IsMobile = false;
+local DevicePlatform = Enum.Platform.None;
+pcall(function() DevicePlatform = UserInputService:GetPlatform(); end);
+IsMobile = (DevicePlatform == Enum.Platform.Android or DevicePlatform == Enum.Platform.IOS);
+local UIRepo = 'https://raw.githubusercontent.com/Bart3kk/LinLib/main/'
+local ScriptRepo = 'https://raw.githubusercontent.com/Bart3kk/funky-friday-autoplay/main/'
+local UI = ''
+
+if IsMobile then
+    UI = loadstring(game:HttpGet(UIRepo .. 'MobileLibrary.lua'))
+else
+    UI = loadstring(game:HttpGet(UIRepo .. 'Library.lua'))()
+
+local ThemeManager = {} do
+	ThemeManager.Folder = 'LinoriaLibSettings'
+	-- if not isfolder(ThemeManager.Folder) then makefolder(ThemeManager.Folder) end
+
+	ThemeManager.Library = UI
+	ThemeManager.BuiltInThemes = {
 		['Default'] 		= { 1, httpService:JSONDecode('{"FontColor":"ffffff","MainColor":"1c1c1c","AccentColor":"0055ff","BackgroundColor":"141414","OutlineColor":"323232"}') },
 		['BBot'] 			= { 2, httpService:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1e1e","AccentColor":"7e48a3","BackgroundColor":"232323","OutlineColor":"141414"}') },
 		['Fatality']		= { 3, httpService:JSONDecode('{"FontColor":"ffffff","MainColor":"1e1842","AccentColor":"c50754","BackgroundColor":"191335","OutlineColor":"3c355d"}') },
@@ -15,7 +29,7 @@ local themeManager = {} do
 		['Quartz'] 			= { 8, httpService:JSONDecode('{"FontColor":"ffffff","MainColor":"232330","AccentColor":"426e87","BackgroundColor":"1d1b26","OutlineColor":"27232f"}') },
 	}
 
-	function themeManager:ApplyTheme(theme)
+	function ThemeManager:ApplyTheme(theme)
 		local customThemeData = self:GetCustomTheme(theme)
 		local data = customThemeData or self.BuiltInThemes[theme]
 
@@ -35,7 +49,7 @@ local themeManager = {} do
 		self:ThemeUpdate()
 	end
 
-	function themeManager:ThemeUpdate()
+	function ThemeManager:ThemeUpdate()
 		-- This allows us to force apply themes without loading the themes tab :)
 		local options = { "FontColor", "MainColor", "AccentColor", "BackgroundColor", "OutlineColor" }
 		for i, field in next, options do
@@ -48,7 +62,7 @@ local themeManager = {} do
 		self.Library:UpdateColorsUsingRegistry()
 	end
 
-	function themeManager:LoadDefault()		
+	function ThemeManager:LoadDefault()		
 		local theme = 'Default'
 		local content = isfile(self.Folder .. '/themes/default.txt') and readfile(self.Folder .. '/themes/default.txt')
 
@@ -65,17 +79,17 @@ local themeManager = {} do
 		end
 
 		if isDefault then
-			Options.themeManager_ThemeList:SetValue(theme)
+			Options.ThemeManager_ThemeList:SetValue(theme)
 		else
 			self:ApplyTheme(theme)
 		end
 	end
 
-	function themeManager:SaveDefault(theme)
+	function ThemeManager:SaveDefault(theme)
 		writefile(self.Folder .. '/themes/default.txt', theme)
 	end
 
-	function themeManager:CreatethemeManager(groupbox)
+	function ThemeManager:CreateThemeManager(groupbox)
 		groupbox:AddLabel('Background color'):AddColorPicker('BackgroundColor', { Default = self.Library.BackgroundColor });
 		groupbox:AddLabel('Main color')	:AddColorPicker('MainColor', { Default = self.Library.MainColor });
 		groupbox:AddLabel('Accent color'):AddColorPicker('AccentColor', { Default = self.Library.AccentColor });
@@ -90,44 +104,44 @@ local themeManager = {} do
 		table.sort(ThemesArray, function(a, b) return self.BuiltInThemes[a][1] < self.BuiltInThemes[b][1] end)
 
 		groupbox:AddDivider()
-		groupbox:AddDropdown('themeManager_ThemeList', { Text = 'Theme list', Values = ThemesArray, Default = 1 })
+		groupbox:AddDropdown('ThemeManager_ThemeList', { Text = 'Theme list', Values = ThemesArray, Default = 1 })
 
 		groupbox:AddButton('Set as default', function()
-			self:SaveDefault(Options.themeManager_ThemeList.Value)
-			self.Library:Notify(string.format('Set default theme to %q', Options.themeManager_ThemeList.Value))
+			self:SaveDefault(Options.ThemeManager_ThemeList.Value)
+			self.Library:Notify(string.format('Set default theme to %q', Options.ThemeManager_ThemeList.Value))
 		end)
 
-		Options.themeManager_ThemeList:OnChanged(function()
-			self:ApplyTheme(Options.themeManager_ThemeList.Value)
+		Options.ThemeManager_ThemeList:OnChanged(function()
+			self:ApplyTheme(Options.ThemeManager_ThemeList.Value)
 		end)
 
 		groupbox:AddDivider()
-		groupbox:AddInput('themeManager_CustomThemeName', { Text = 'Custom theme name' })
-		groupbox:AddDropdown('themeManager_CustomThemeList', { Text = 'Custom themes', Values = self:ReloadCustomThemes(), AllowNull = true, Default = 1 })
+		groupbox:AddInput('ThemeManager_CustomThemeName', { Text = 'Custom theme name' })
+		groupbox:AddDropdown('ThemeManager_CustomThemeList', { Text = 'Custom themes', Values = self:ReloadCustomThemes(), AllowNull = true, Default = 1 })
 		groupbox:AddDivider()
 		
 		groupbox:AddButton('Save theme', function() 
-			self:SaveCustomTheme(Options.themeManager_CustomThemeName.Value)
+			self:SaveCustomTheme(Options.ThemeManager_CustomThemeName.Value)
 
-			Options.themeManager_CustomThemeList:SetValues(self:ReloadCustomThemes())
-			Options.themeManager_CustomThemeList:SetValue(nil)
+			Options.ThemeManager_CustomThemeList:SetValues(self:ReloadCustomThemes())
+			Options.ThemeManager_CustomThemeList:SetValue(nil)
 		end):AddButton('Load theme', function() 
-			self:ApplyTheme(Options.themeManager_CustomThemeList.Value) 
+			self:ApplyTheme(Options.ThemeManager_CustomThemeList.Value) 
 		end)
 
 		groupbox:AddButton('Refresh list', function()
-			Options.themeManager_CustomThemeList:SetValues(self:ReloadCustomThemes())
-			Options.themeManager_CustomThemeList:SetValue(nil)
+			Options.ThemeManager_CustomThemeList:SetValues(self:ReloadCustomThemes())
+			Options.ThemeManager_CustomThemeList:SetValue(nil)
 		end)
 
 		groupbox:AddButton('Set as default', function()
-			if Options.themeManager_CustomThemeList.Value ~= nil and Options.themeManager_CustomThemeList.Value ~= '' then
-				self:SaveDefault(Options.themeManager_CustomThemeList.Value)
-				self.Library:Notify(string.format('Set default theme to %q', Options.themeManager_CustomThemeList.Value))
+			if Options.ThemeManager_CustomThemeList.Value ~= nil and Options.ThemeManager_CustomThemeList.Value ~= '' then
+				self:SaveDefault(Options.ThemeManager_CustomThemeList.Value)
+				self.Library:Notify(string.format('Set default theme to %q', Options.ThemeManager_CustomThemeList.Value))
 			end
 		end)
 
-		themeManager:LoadDefault()
+		ThemeManager:LoadDefault()
 
 		local function UpdateTheme()
 			self:ThemeUpdate()
@@ -140,7 +154,7 @@ local themeManager = {} do
 		Options.FontColor:OnChanged(UpdateTheme)
 	end
 
-	function themeManager:GetCustomTheme(file)
+	function ThemeManager:GetCustomTheme(file)
 		local path = self.Folder .. '/themes/' .. file
 		if not isfile(path) then
 			return nil
@@ -156,7 +170,7 @@ local themeManager = {} do
 		return decoded
 	end
 
-	function themeManager:SaveCustomTheme(file)
+	function ThemeManager:SaveCustomTheme(file)
 		if file:gsub(' ', '') == '' then
 			return self.Library:Notify('Invalid file name for theme (empty)', 3)
 		end
@@ -171,7 +185,7 @@ local themeManager = {} do
 		writefile(self.Folder .. '/themes/' .. file .. '.json', httpService:JSONEncode(theme))
 	end
 
-	function themeManager:ReloadCustomThemes()
+	function ThemeManager:ReloadCustomThemes()
 		local list = listfiles(self.Folder .. '/themes')
 
 		local out = {}
@@ -197,11 +211,11 @@ local themeManager = {} do
 		return out
 	end
 
-	function themeManager:SetLibrary(lib)
+	function ThemeManager:SetLibrary(lib)
 		self.Library = lib
 	end
 
-	function themeManager:BuildFolderTree()
+	function ThemeManager:BuildFolderTree()
 		local paths = {}
 
 		-- build the entire tree if a path is like some-hub/phantom-forces
@@ -223,28 +237,28 @@ local themeManager = {} do
 		end
 	end
 
-	function themeManager:SetFolder(folder)
+	function ThemeManager:SetFolder(folder)
 		self.Folder = folder
 		self:BuildFolderTree()
 	end
 
-	function themeManager:CreateGroupBox(tab)
-		assert(self.Library, 'Must set themeManager.Library first!')
+	function ThemeManager:CreateGroupBox(tab)
+		assert(self.Library, 'Must set ThemeManager.Library first!')
 		return tab:AddLeftGroupbox('Themes')
 	end
 
-	function themeManager:ApplyToTab(tab)
-		assert(self.Library, 'Must set themeManager.Library first!')
+	function ThemeManager:ApplyToTab(tab)
+		assert(self.Library, 'Must set ThemeManager.Library first!')
 		local groupbox = self:CreateGroupBox(tab)
-		self:CreatethemeManager(groupbox)
+		self:CreateThemeManager(groupbox)
 	end
 
-	function themeManager:ApplyToGroupbox(groupbox)
-		assert(self.Library, 'Must set themeManager.Library first!')
-		self:CreatethemeManager(groupbox)
+	function ThemeManager:ApplyToGroupbox(groupbox)
+		assert(self.Library, 'Must set ThemeManager.Library first!')
+		self:CreateThemeManager(groupbox)
 	end
 
-	themeManager:BuildFolderTree()
+	ThemeManager:BuildFolderTree()
 end
 
-return themeManager
+return ThemeManager
