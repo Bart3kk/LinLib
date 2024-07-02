@@ -12,6 +12,7 @@ if IsMobile then
     UI = loadstring(game:HttpGet(UIRepo .. 'MobileLibrary.lua'))
 else
     UI = loadstring(game:HttpGet(UIRepo .. 'Library.lua'))()
+end
 
 local ThemeManager = {} do
 	ThemeManager.Folder = 'LinoriaLibSettings'
