@@ -1,19 +1,3 @@
-local httpService = game:GetService('HttpService')
-
-local IsMobile = false;
-local DevicePlatform = Enum.Platform.None;
-pcall(function() DevicePlatform = UserInputService:GetPlatform(); end);
-IsMobile = (DevicePlatform == Enum.Platform.Android or DevicePlatform == Enum.Platform.IOS);
-local UIRepo = 'https://raw.githubusercontent.com/Bart3kk/LinLib/main/'
-local ScriptRepo = 'https://raw.githubusercontent.com/Bart3kk/funky-friday-autoplay/main/'
-local UI = ''
-
-if IsMobile then
-    UI = loadstring(game:HttpGet(UIRepo .. 'MobileLibrary.lua'))
-else
-    UI = loadstring(game:HttpGet(UIRepo .. 'Library.lua'))()
-end
-
 local ThemeManager = {} do
 	ThemeManager.Folder = 'LinoriaLibSettings'
 	-- if not isfolder(ThemeManager.Folder) then makefolder(ThemeManager.Folder) end
