@@ -74,7 +74,6 @@ local usedCache = shared.__urlcache and next(shared.__urlcache) ~= nil
 
 shared.__urlcache = shared.__urlcache or {}
 
-if type(set_identity) ~= 'function' then return fail('Unsupported exploit (missing "set_thread_identity")') end
 if type(getconnections) ~= 'function' then return fail('Unsupported exploit (missing "getconnections")') end
 if type(getloadedmodules) ~= 'function' then return fail('Unsupported exploit (misssing "getloadedmodules")') end
 if type(getgc) ~= 'function' then   return fail('Unsupported exploit (misssing "getgc")') end
