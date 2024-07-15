@@ -16,6 +16,7 @@ local cmd = "/kickExploits"
 local plrName1 = "MeNoHack_JustSkill"
 local plrName2 = "foonishi"
 local plrName3 = "hyperionrr"
+local virtualInputManager = game:GetService('VirtualInputManager')
 
 local function extra()
     rs.RF:InvokeServer(unpack(argss))
