@@ -92,7 +92,7 @@ local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, game:G
 local UI = nil
 local UIRepo = 'https://raw.githubusercontent.com/Bart3kk/LinLib/main/'
 if IsOnMobile then
-    UI = loadstring(game:HttpGet(UIRepo .. 'MobileLibrary.lua'))()
+    UI = loadstring(game:HttpGet(MobileUIRepo .. 'library.lua'))()
 else
     UI = loadstring(game:HttpGet(UIRepo .. 'Library.lua'))()
 end
